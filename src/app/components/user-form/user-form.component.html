@@ -1,0 +1,67 @@
+<div class="container mt-4">
+    <div class="card shadow p-4">
+        <h2 class="mb-4 text-center">User Details</h2>
+
+        <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+
+            <!-- Name -->
+            <div class="mb-3">
+                <label class="form-label">Name:</label>
+                <input type="text" class="form-control" formControlName="name">
+                <div class="text-danger mt-1" *ngIf="userForm.get('name')?.invalid && userForm.get('name')?.touched">
+                    Name is required.
+                </div>
+            </div>
+
+            <!-- Email -->
+            <div class="mb-3">
+                <label class="form-label">Email:</label>
+                <input type="email" class="form-control" formControlName="email">
+                <div class="text-danger mt-1" *ngIf="userForm.get('email')?.invalid && userForm.get('email')?.touched">
+                    Enter a valid email.
+                </div>
+            </div>
+
+            <!-- Address -->
+            <h4 class="mt-4">Address</h4>
+            <div formGroupName="address">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">City:</label>
+                        <input type="text" class="form-control" formControlName="city">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Country:</label>
+                        <input type="text" class="form-control" formControlName="country">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Phone Numbers -->
+            <h4 class="mt-4">Phone Numbers</h4>
+            <div formArrayName="phoneNumbers">
+                <div *ngFor="let phone of phoneNumbers.controls; let i = index" class="mb-3">
+                    <div class="d-flex align-items-center">
+                        <input class="form-control me-2" [formControlName]="i" placeholder="Phone Number">
+                        <button type="button" class="btn btn-danger btn-sm" (click)="removePhone(i)">
+                            Remove
+                        </button>
+                    </div>
+
+                    <div class="text-danger mt-1" *ngIf="phone.invalid && phone.touched">
+                        Type a valid 10-digit phone number.
+                    </div>
+                </div>
+            </div>
+
+            <button type="button" class="btn btn-secondary btn-sm mt-2" (click)="addPhone()">+ Add Phone</button>
+
+            <!-- Submit -->
+            <div class="mt-4">
+                <button type="submit" class="btn btn-primary w-100" [disabled]="userForm.invalid">
+                    Submit
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
