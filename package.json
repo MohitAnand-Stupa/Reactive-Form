@@ -22,7 +22,6 @@
     "google-libphonenumber": "^3.2.43",
     "i18n-iso-countries": "^7.14.0",
     "intl-tel-input": "^19.5.7",
-    "ngx-intl-tel-input": "^17.0.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.14.3"
