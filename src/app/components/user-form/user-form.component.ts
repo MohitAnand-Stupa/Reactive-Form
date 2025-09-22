@@ -76,19 +76,14 @@ export class UserFormComponent {
       this.submittedUsers.push(userData);
     }
 
-    this.userForm.reset();
-    this.phoneNumbers.clear();
-    this.addPhone();
-    this.submitted = false;
+    this.resetForm();
   }
 
   editUser(index: number) {
     const user = this.submittedUsers[index];
     this.editIndex = index;
 
-    
-    this.userForm.reset();
-    this.phoneNumbers.clear();
+    this.resetForm();
 
     this.userForm.patchValue({
       name: user.name,
@@ -105,11 +100,31 @@ export class UserFormComponent {
   }
 
   deleteUser(index: number) {
+    const confirmDelete = window.confirm('Are you sure you want to delete this user?');
+
+    if (!confirmDelete) return;
+
     this.submittedUsers.splice(index, 1);
+
+    
+    if (this.editIndex === index) {
+      this.resetForm();
+      this.editIndex = null;
+    } else if (this.editIndex !== null && index < this.editIndex) {
+      
+      this.editIndex -= 1;
+    }
   }
 
   getCountryName(code: string) {
     const country = this.countryList.find(c => c.code === code);
     return country ? country.name : '';
+  }
+
+  private resetForm() {
+    this.userForm.reset();
+    this.phoneNumbers.clear();
+    this.addPhone();
+    this.submitted = false;
   }
 }
