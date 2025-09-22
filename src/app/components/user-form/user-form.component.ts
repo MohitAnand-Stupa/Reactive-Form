@@ -80,24 +80,28 @@ export class UserFormComponent {
   }
 
   editUser(index: number) {
-    const user = this.submittedUsers[index];
-    this.editIndex = index;
+  const user = this.submittedUsers[index];
+  this.editIndex = index;
 
-    this.resetForm();
+  this.userForm.reset();
+  this.phoneNumbers.clear();
 
-    this.userForm.patchValue({
-      name: user.name,
-      email: user.email,
-      address: {
-        city: user.address.city,
-        country: user.address.country
-      }
-    });
+ 
+  this.userForm.patchValue({
+    name: user.name,
+    email: user.email,
+    address: {
+      city: user.address.city,
+      country: user.address.country
+    }
+  });
 
-    user.phoneNumbers.forEach((phone: string) => {
-      this.phoneNumbers.push(this.fb.control(phone, [Validators.required, Validators.pattern('^[0-9]{10}$')]));
-    });
-  }
+ 
+  user.phoneNumbers.forEach((phone: string) => {
+    this.phoneNumbers.push(this.fb.control(phone, [Validators.required, Validators.pattern('^[0-9]{10}$')]));
+  });
+}
+
 
   deleteUser(index: number) {
     const confirmDelete = window.confirm('Are you sure you want to delete this user?');
