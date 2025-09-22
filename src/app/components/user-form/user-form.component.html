@@ -1,67 +1,109 @@
 <div class="container mt-4">
-    <div class="card shadow p-4">
-        <h2 class="mb-4 text-center">User Details</h2>
+  <div class="card shadow p-4">
+    <h2 class="mb-4 text-center">User Details</h2>
 
-        <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+    <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
 
-            <!-- Name -->
-            <div class="mb-3">
-                <label class="form-label">Name:</label>
-                <input type="text" class="form-control" formControlName="name">
-                <div class="text-danger mt-1" *ngIf="userForm.get('name')?.invalid && userForm.get('name')?.touched">
-                    Name is required.
-                </div>
+      <!-- Name -->
+      <div class="mb-3">
+        <label class="form-label">Name:</label>
+        <input type="text" class="form-control" formControlName="name">
+        <div class="text-danger mt-1" *ngIf="submitted && userForm.get('name')?.invalid">
+          Name is required.
+        </div>
+      </div>
+
+      <!-- Email -->
+      <div class="mb-3">
+        <label class="form-label">Email:</label>
+        <input type="email" class="form-control" formControlName="email">
+        <div class="text-danger mt-1" *ngIf="submitted && userForm.get('email')?.invalid">
+          Enter a valid email.
+        </div>
+      </div>
+
+      <!-- Address -->
+      <h4 class="mt-4">Address</h4>
+      <div formGroupName="address">
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label class="form-label">City:</label>
+            <input type="text" class="form-control" formControlName="city">
+            <div class="text-danger mt-1" *ngIf="submitted && addressGroup.get('city')?.invalid">
+              City is required.
             </div>
-
-            <!-- Email -->
-            <div class="mb-3">
-                <label class="form-label">Email:</label>
-                <input type="email" class="form-control" formControlName="email">
-                <div class="text-danger mt-1" *ngIf="userForm.get('email')?.invalid && userForm.get('email')?.touched">
-                    Enter a valid email.
-                </div>
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Country:</label>
+            <select class="form-select" formControlName="country">
+              <option value="">Select a country</option>
+              <option *ngFor="let c of countryList" [value]="c.code">{{ c.name }}</option>
+            </select>
+            <div class="text-danger mt-1" *ngIf="submitted && addressGroup.get('country')?.invalid">
+              Please select a country.
             </div>
+          </div>
+        </div>
+      </div>
 
-            <!-- Address -->
-            <h4 class="mt-4">Address</h4>
-            <div formGroupName="address">
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">City:</label>
-                        <input type="text" class="form-control" formControlName="city">
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">Country:</label>
-                        <input type="text" class="form-control" formControlName="country">
-                    </div>
-                </div>
-            </div>
+      <!-- Phone Numbers -->
+      <h4 class="mt-4">Phone Numbers</h4>
+      <div formArrayName="phoneNumbers">
+        <div *ngFor="let phone of phoneNumbers.controls; let i = index" class="mb-3">
+          <div class="d-flex align-items-center">
+            <input class="form-control me-2" [formControlName]="i" placeholder="Phone Number">
+            <button type="button" class="btn btn-danger btn-sm" (click)="removePhone(i)">
+              Remove
+            </button>
+          </div>
+          <div class="text-danger mt-1" *ngIf="submitted && phone.invalid">
+            Type a valid 10-digit phone number.
+          </div>
+        </div>
+      </div>
 
-            <!-- Phone Numbers -->
-            <h4 class="mt-4">Phone Numbers</h4>
-            <div formArrayName="phoneNumbers">
-                <div *ngFor="let phone of phoneNumbers.controls; let i = index" class="mb-3">
-                    <div class="d-flex align-items-center">
-                        <input class="form-control me-2" [formControlName]="i" placeholder="Phone Number">
-                        <button type="button" class="btn btn-danger btn-sm" (click)="removePhone(i)">
-                            Remove
-                        </button>
-                    </div>
+      <button type="button" class="btn btn-secondary btn-sm mt-2" (click)="addPhone()">+ Add Phone</button>
 
-                    <div class="text-danger mt-1" *ngIf="phone.invalid && phone.touched">
-                        Type a valid 10-digit phone number.
-                    </div>
-                </div>
-            </div>
+      <!-- Submit -->
+      <div class="mt-4">
+        <button type="submit" class="btn btn-primary w-100">
+          {{ editIndex !== null ? 'Update User' : 'Submit' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
 
-            <button type="button" class="btn btn-secondary btn-sm mt-2" (click)="addPhone()">+ Add Phone</button>
-
-            <!-- Submit -->
-            <div class="mt-4">
-                <button type="submit" class="btn btn-primary w-100" [disabled]="userForm.invalid">
-                    Submit
-                </button>
-            </div>
-        </form>
-    </div>
+<!-- Users Table -->
+<div class="mt-5 submitted-users" *ngIf="submittedUsers.length > 0">
+  <h3 class="mb-3">Submitted Users</h3>
+  <div class="table-responsive">
+    <table class="table table-bordered table-striped">
+      <thead class="table-dark">
+        <tr>
+          <th>Sr.No</th>
+          <th>Name</th>
+          <th>Email</th>
+          <th>City</th>
+          <th>Country</th>
+          <th>Phone Number</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of submittedUsers; let i = index">
+          <td>{{ i + 1 }}</td>
+          <td>{{ user.name }}</td>
+          <td>{{ user.email }}</td>
+          <td>{{ user.address.city }}</td>
+          <td>{{ getCountryName(user.address.country) }}</td>
+          <td>{{ user.phoneNumbers[0] || '' }}</td>
+          <td>
+            <button class="btn btn-sm btn-warning me-2" (click)="editUser(i)">Edit</button>
+            <button class="btn btn-sm btn-danger" (click)="deleteUser(i)">Delete</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </div>
